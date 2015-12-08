@@ -29,6 +29,9 @@
 }
 - (IBAction)testCoreDataButton:(id)sender {
     [self testCoreData:YES];
+    UIAlertView *completionAlert = [[UIAlertView alloc]
+                                    initWithTitle:@"Success" message:@"The test completed successfully." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    [completionAlert show];
 }
 
 

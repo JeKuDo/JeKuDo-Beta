@@ -38,6 +38,9 @@
                             </constraints>
                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                             <textInputTraits key="textInputTraits"/>
+                            <connections>
+                                <outlet property="delegate" destination="-1" id="7Vr-E7-YEI"/>
+                            </connections>
                         </textField>
                         <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="WuI-dE-gDL">
                             <rect key="frame" x="8" y="239" width="584" height="30"/>
@@ -46,6 +49,9 @@
                             </constraints>
                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                             <textInputTraits key="textInputTraits"/>
+                            <connections>
+                                <outlet property="delegate" destination="-1" id="ciG-K2-m4N"/>
+                            </connections>
                         </textField>
                         <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6Mt-4R-pTh">
                             <rect key="frame" x="8" y="325" width="584" height="60"/>
@@ -100,6 +106,9 @@
                         <constraint firstItem="IWe-AV-RQS" firstAttribute="top" secondItem="6Mt-4R-pTh" secondAttribute="bottom" constant="8" symbolic="YES" id="xXr-Kb-RgO"/>
                         <constraint firstItem="4wE-eD-Oiy" firstAttribute="top" secondItem="zOy-QT-CPE" secondAttribute="bottom" constant="8" symbolic="YES" id="zm4-5R-zGt"/>
                     </constraints>
+                    <connections>
+                        <outlet property="delegate" destination="-1" id="OS8-Hc-fBb"/>
+                    </connections>
                 </scrollView>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
