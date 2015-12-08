@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>apiurl</key>
+	<string>http://104.239.165.98/api</string>
+	<key>apiurl-local</key>
+	<string>http://localhost:8080/api</string>
+	<key>apikey</key>
+	<string>moonseed</string>
+</dict>
+</plist>

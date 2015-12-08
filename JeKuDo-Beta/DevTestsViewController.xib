@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9060" systemVersion="14F1021" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9051"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="DevTestsViewController">
+            <connections>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="jekudo-tiger.png" translatesAutoresizingMaskIntoConstraints="NO" id="pOt-sH-w4z">
+                    <rect key="frame" x="120" y="120" width="360" height="360"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="360" id="QaZ-Ia-d5P"/>
+                        <constraint firstAttribute="height" constant="360" id="RTa-xp-Vac"/>
+                    </constraints>
+                </imageView>
+                <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3wq-7Z-Lt7">
+                    <rect key="frame" x="219" y="82" width="163" height="30"/>
+                    <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="163" id="UZm-VC-TRl"/>
+                    </constraints>
+                    <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    <state key="normal" title="Run The App!"/>
+                    <connections>
+                        <action selector="runAppButton:" destination="-1" eventType="touchUpInside" id="6KW-eU-5vK"/>
+                    </connections>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rjg-CM-SZ8">
+                    <rect key="frame" x="251" y="488" width="98" height="30"/>
+                    <state key="normal" title="Test CoreData">
+                        <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <connections>
+                        <action selector="testCoreDataButton:" destination="-1" eventType="touchUpInside" id="4LJ-x5-JuZ"/>
+                    </connections>
+                </button>
+            </subviews>
+            <color key="backgroundColor" red="0.99215686270000003" green="0.52549019610000003" blue="0.035294117649999998" alpha="1" colorSpace="calibratedRGB"/>
+            <constraints>
+                <constraint firstItem="pOt-sH-w4z" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="4R5-Bn-i3c"/>
+                <constraint firstItem="pOt-sH-w4z" firstAttribute="centerY" secondItem="i5M-Pr-FkT" secondAttribute="centerY" id="Ago-jH-jeg"/>
+                <constraint firstItem="pOt-sH-w4z" firstAttribute="centerX" secondItem="3wq-7Z-Lt7" secondAttribute="centerX" id="E1v-5W-IBg"/>
+                <constraint firstItem="pOt-sH-w4z" firstAttribute="centerX" secondItem="rjg-CM-SZ8" secondAttribute="centerX" id="Gp7-rg-pJ1"/>
+                <constraint firstItem="pOt-sH-w4z" firstAttribute="top" secondItem="3wq-7Z-Lt7" secondAttribute="bottom" constant="7" id="Kqu-gI-Kof"/>
+                <constraint firstItem="rjg-CM-SZ8" firstAttribute="top" secondItem="pOt-sH-w4z" secondAttribute="bottom" constant="8" symbolic="YES" id="Ukg-en-lgG"/>
+            </constraints>
+        </view>
+    </objects>
+    <resources>
+        <image name="jekudo-tiger.png" width="1800" height="1800"/>
+    </resources>
+</document>
