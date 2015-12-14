@@ -381,13 +381,21 @@ int messageLifespanSeconds = 60*60*72;
     if([[dictionary valueForKey:@"_id"] isEqualToString:@""])
         return nil;
     
-    Group *group = [[Group alloc] init];
-    [group setGroupId:[dictionary valueForKey:@"_id"]];
-    [group setName:[dictionary valueForKey:@"name"]];
-    [group setCreated:[dictionary valueForKey:@"created"]];
-    [group setPublicKey:[dictionary valueForKey:@"publickey"]];
-    [group setParticipants: [self fetchUsersByUsernames:[dictionary valueForKey:@"participants"] excludeCurrentUser:NO]];
-    [group setAdmins: [self fetchUsersByUsernames:[dictionary valueForKey:@"admins"] excludeCurrentUser:NO]];
+    Group *group = [[Group alloc] initWithGroupId:[dictionary valueForKey:@"_id"]
+                                        name:[dictionary valueForKey:@"name"]
+                                     created:[dictionary valueForKey:@"created"]
+                                   publicKey:[dictionary valueForKey:@"publickey"]
+                                 adminsArray:[self fetchUsersByUsernames:[dictionary valueForKey:@"admins"] excludeCurrentUser:NO]
+                           participantsArray:[self fetchUsersByUsernames:[dictionary valueForKey:@"participants"] excludeCurrentUser:NO]];
+    
+//    Group *group = [[Group alloc] init];
+//    group.groupId = [dictionary valueForKey:@"_id"];
+//    [group setGroupId:[dictionary valueForKey:@"_id"]];
+//    [group setName:[dictionary valueForKey:@"name"]];
+//    [group setCreated:[dictionary valueForKey:@"created"]];
+//    [group setPublicKey:[dictionary valueForKey:@"publickey"]];
+//    [group setParticipants: [self fetchUsersByUsernames:[dictionary valueForKey:@"participants"] excludeCurrentUser:NO]];
+//    [group setAdmins: [self fetchUsersByUsernames:[dictionary valueForKey:@"admins"] excludeCurrentUser:NO]];
     
     return group;
 }

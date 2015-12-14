@@ -196,7 +196,7 @@ static NSString * const sentTextCellIdentifier = @"sentTextCellIdentifier";
         messageToSend = [self postNewMessge:messageToSend];
     }
     else {
-        if(_group.participants.count > 1) {
+        if(_group.participantsArray.count > 1) {
             //        g.participants = @[_user.username,
             Group *newGroup = [[AppDataSource sharedInstance] createNewGroup:_group];
             [messageToSend setGroupId:newGroup.groupId];

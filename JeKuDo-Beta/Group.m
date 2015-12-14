@@ -10,6 +10,28 @@
 
 @implementation Group
 
-// Insert code here to add functionality to your managed object subclass
+@dynamic admins;
+@dynamic participants;
+@dynamic groupId, name, created, publicKey, adminsArray, participantsArray, numberOfUnreadMessages, messages;
+
+- (instancetype) initWithGroupId:(NSString *)groupId
+                       name:(NSString *)name
+                    created:(NSDate *)created
+                  publicKey:(NSString *)publicKey
+                adminsArray:(NSArray *)adminsArray
+          participantsArray:(NSArray *)participantsArray {
+    
+    self = [super init];
+    if (self) {
+//        self.groupId = groupId;
+        self.name = name;
+        self.created = created;
+        self.publicKey = publicKey;
+        self.adminsArray = adminsArray;
+        self.participantsArray = participantsArray;
+    }
+    return self;
+    
+}
 
 @end
