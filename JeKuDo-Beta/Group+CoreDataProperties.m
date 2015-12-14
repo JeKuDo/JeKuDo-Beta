@@ -2,7 +2,7 @@
 //  Group+CoreDataProperties.m
 //  JeKuDo-Beta
 //
-//  Created by reuven on 12/7/15.
+//  Created by reuven on 12/14/15.
 //  Copyright © 2015 JeKuDo. All rights reserved.
 //
 //  Choose "Create NSManagedObject Subclass…" from the Core Data editor menu

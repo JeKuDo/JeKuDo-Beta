@@ -62,16 +62,16 @@ static void *GroupCellBadgeContext = &GroupCellBadgeContext;
     [self removeObserver:self forKeyPath:@"group.numberOfUnreadMessages" context:GroupCellBadgeContext];
 }
 
-- (void)setGroup:(Group *)group {
+- (void)setGroup:(AppGroup *)group {
     _group = group;
     
 //    [[AppDataSource sharedInstance] fetchCurrentUserWithCompletion:^(User *currentUser, NSError *err) {
     
         self.titleLabel.text = group.name;
         
-        NSMutableArray *groupParticipants = [group.participants mutableCopy];
+        NSMutableArray *groupParticipants = [group.participantsArray mutableCopy];
     
-        for (Participant *participant in groupParticipants) {
+        for (AppParticipant *participant in groupParticipants) {
             if ([participant.username isEqualToString: group.name]) {
 //                [avatarImages addObject:participant.avatarImage];
                 [[GroupAvatarGenerator sharedInstance] getAvatarImageForGroupName:group.name withAvatars:@[participant.avatarImage] withCompletionHandler:^(UIImage *avatarImage) {

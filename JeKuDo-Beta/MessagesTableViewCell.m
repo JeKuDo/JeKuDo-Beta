@@ -7,7 +7,7 @@
 //
 
 #import "MessagesTableViewCell.h"
-#import "Group.h"
+#import "AppGroup.h"
 
 @implementation MessagesTableViewCell
 
@@ -20,7 +20,7 @@
     return self;
 }
 
-- (void)setGroup:(Group *)group {
+- (void)setGroup:(AppGroup *)group {
 //    [self.textLabel setText:group.name];
 //    [self setImage:[UIImage imageNamed:@"avatarCurrentUser.png"]];
 }

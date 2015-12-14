@@ -2,7 +2,7 @@
 //  Message.h
 //  JeKuDo-Beta
 //
-//  Created by reuven on 12/7/15.
+//  Created by reuven on 12/14/15.
 //  Copyright © 2015 JeKuDo. All rights reserved.
 //
 
@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface Message : NSManagedObject
 
-@property (nullable, nonatomic, retain) NSArray *seenByParticipantsArray;
+// Insert code here to declare functionality of your managed object subclass
 
 @end
 

@@ -8,10 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
-@class Group;
+@class AppGroup;
 
 @interface MessagesTableViewCell : UITableViewCell
 
-@property (nonatomic, strong) Group *group;
+@property (nonatomic, strong) AppGroup *group;
 
 @end

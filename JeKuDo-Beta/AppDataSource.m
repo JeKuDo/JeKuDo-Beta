@@ -11,10 +11,13 @@
 #import <CoreData/CoreData.h>
 #import "AppDelegate.h"
 #import "WebServicesAPI.h"
-#import "Participant.h"
-#import "Message.h"
-#import "Group.h"
+//#import "Participant.h"
+//#import "Message.h"
+//#import "Group.h"
 #import "User.h"
+//#import "AppParticipant.h"
+//#import "AppMessage.h"
+#import "AppGroup.h"
 
 // data collection names
 #define CURRENT_USER @"CurrentUser"
@@ -87,7 +90,7 @@ int messageLifespanSeconds = 60*60*72;
 - (void)logOutCurrentUserWithCompletion:(void (^)(NSArray *, NSError *))completion {
     User *user = [self fetchCurrentUser];
     [user setPasshash:nil];
-    NSDictionary * userData = [self userDictionaryFromAppUser:user];
+    NSDictionary * userData = [self dictionaryFromAppUser:user];
     [self pushLocalDataArray:CURRENT_USER withArray:@[userData]];
     if(completion)
         completion(nil, nil);
@@ -123,13 +126,13 @@ int messageLifespanSeconds = 60*60*72;
     groups = [self getUserMessagesForGroups:groups goToServer:goToServer];
     return groups;
 }
-- (Group *)createNewGroup:(Group *)groupToCreate {
-    return [self createNewGroupFromData:[self groupDictionaryFromAppGroup:groupToCreate]];
+- (AppGroup *)createNewGroup:(AppGroup *)groupToCreate {
+    return [self createNewGroupFromData:[self dictionaryFromAppGroup:groupToCreate]];
 }
-- (Group *)fetchDMGroupWithParticipant:(Participant *)participant {
+- (AppGroup *)fetchDMGroupWithParticipant:(AppParticipant *)participant {
     NSArray *groups = [self fetchUserGroupsGoToServer:NO];
-    for (Group *group in groups) {
-        for (Participant *groupParticipant in group.participants) {
+    for (AppGroup *group in groups) {
+        for (AppParticipant *groupParticipant in group.participantsArray) {
             if ([groupParticipant.username isEqualToString:participant.username]) {
                 [group setName:participant.username];
                 NSArray *groupsWithMessages = [self getUserMessagesForGroups:@[group] goToServer:YES];
@@ -137,11 +140,11 @@ int messageLifespanSeconds = 60*60*72;
             }
         }
     }
-    Group *group = [[Group alloc] init];
+    AppGroup *group = [[AppGroup alloc] init];
     NSMutableArray *participants = [[NSMutableArray alloc] init];
     [participants addObject:[self fetchCurrentUser]];
     [participants addObject:participant];
-    [group setParticipants:participants];
+    [group setParticipantsArray:participants];
     [group setName:participant.username];
     group = [self createNewGroup:group];
     NSArray *groupsWithMessages = [self getUserMessagesForGroups:@[group] goToServer:YES];
@@ -149,12 +152,12 @@ int messageLifespanSeconds = 60*60*72;
 }
 
 // messages
-- (void)postNewMessage:(Message *)message withCompletion:(void (^)(Message *, NSError *))completion {
+- (void)postNewMessage:(AppMessage *)message withCompletion:(void (^)(AppMessage *, NSError *))completion {
     
-    Message *savedMessage;
+    AppMessage *savedMessage;
     NSError *err;
     
-    NSMutableDictionary *messageDictionaryFromAppMessage = [[self messageDictionaryFromAppMessage:message] mutableCopy];
+    NSMutableDictionary *messageDictionaryFromAppMessage = [[self dictionaryFromAppMessage:message] mutableCopy];
     
     NSDictionary *savedMessageData = [self postNewMessageDataToServer:messageDictionaryFromAppMessage];
     
@@ -190,7 +193,7 @@ int messageLifespanSeconds = 60*60*72;
     User *savedUser;
     NSError *err;
     
-    NSMutableDictionary *userDictionaryFromAppUser = [[self userDictionaryFromAppUser:user] mutableCopy];
+    NSMutableDictionary *userDictionaryFromAppUser = [[self dictionaryFromAppUser:user] mutableCopy];
     
     NSDictionary *savedUserData = [self pushCurrentUserDataToServer:[userDictionaryFromAppUser copy] unique:unique];
     
@@ -204,7 +207,7 @@ int messageLifespanSeconds = 60*60*72;
 }
 - (NSArray *)appUsersFromUsernameArray:(NSArray *)usernames {
     NSArray *usersDataArray = [self fetchUsersDataByUsernamesFromServer:usernames];
-    NSArray *usersArray = [self appUserArrayFromDictionaryArray:usersDataArray];
+    NSArray *usersArray = [self appParticipantArrayFromDictionaryArray:usersDataArray];
     return [NSArray arrayWithArray:usersArray];
 }
 
@@ -235,7 +238,7 @@ int messageLifespanSeconds = 60*60*72;
         return dArr;
     }
 }
-- (Group *)createNewGroupFromData:(NSDictionary *)groupDataDictionary {
+- (AppGroup *)createNewGroupFromData:(NSDictionary *)groupDataDictionary {
     NSDictionary *d = [self createNewGroupOnServer:groupDataDictionary];
     return [self appGroupFromDictionary:d];
 }
@@ -249,7 +252,7 @@ int messageLifespanSeconds = 60*60*72;
     return groups;
 }
 - (NSArray *) getUserMessagesForGroupsFromLocalData:(NSArray *)groups {
-    for (Group *group in groups) {
+    for (AppGroup *group in groups) {
         //        NSString *username = [[self fetchCurrentUser] valueForKey:@"username"];
         //        NSArray *messages = [self fetchUnreadMessagesDataForUsernameFromServer:username];
         //        [group setMessages:messages];
@@ -257,11 +260,11 @@ int messageLifespanSeconds = 60*60*72;
     return groups;
 }
 - (NSArray *) getUserMessagesForGroupsFromServer:(NSArray *)groups {
-    for (Group *group in groups) {
+    for (AppGroup *appGroup in groups) {
         NSString *username = [[self fetchCurrentUser] valueForKey:@"username"];
-        NSArray *messages = [self fetchUnreadMessagesDataForUsernameFromServer:username withGroupId:group.groupId];
+        NSArray *messages = [self fetchUnreadMessagesDataForUsernameFromServer:username withGroupId:appGroup.groupId];
         messages = [self appMessageArrayFromDictionaryArray:messages];
-        [group setMessages:messages];
+        [appGroup setMessages:messages];
     }
     return groups;
 }
@@ -285,7 +288,7 @@ int messageLifespanSeconds = 60*60*72;
 
 #pragma mark - Helper Methods - Data Object Conversion
 
-// users
+// user
 - (User *)appUserFromDictionary:(NSDictionary *)dictionary {
     if(!dictionary)
         return nil;
@@ -313,7 +316,7 @@ int messageLifespanSeconds = 60*60*72;
     [user setCreated:[dictionary valueForKey:@"created"]];
     return user;
 }
-- (NSDictionary *)userDictionaryFromAppUser:(User *)user {
+- (NSDictionary *)dictionaryFromAppUser:(User *)user {
     if(!user)
         return nil;
     NSMutableDictionary *userDictionary = [[NSMutableDictionary alloc] init];
@@ -346,34 +349,81 @@ int messageLifespanSeconds = 60*60*72;
     }
     return userDictionary;
 }
-- (NSArray *)userDictionaryArrayFromUserArray:(NSArray *)userArray {
-    NSMutableArray *userDictionaries = [[NSMutableArray alloc] init];
-    for (User *user in userArray) {
-        NSDictionary *userDictionary = [self userDictionaryFromAppUser:user];
-        if(userDictionary)
-            [userDictionaries addObject:userDictionary];
+
+// participants
+- (AppParticipant *)appParticipantFromDictionary:(NSDictionary *)dictionary {
+    if(!dictionary)
+        return nil;
+    if(![dictionary valueForKey:@"username"])
+        return nil;
+    if([[dictionary valueForKey:@"username"] isEqualToString:@""])
+        return nil;
+    NSData *imageData;
+    if(!
+       [[dictionary valueForKey:@"imagedata"] isKindOfClass:[NSNull class]]) {
+        UIImage *i = [self decodeBase64ToImage:[dictionary valueForKey:@"imagedata"]];
+        imageData = UIImagePNGRepresentation(i);
     }
-    return [NSArray arrayWithArray:userDictionaries];
-}
-- (NSArray *)appUserArrayFromDictionaryArray:(NSArray *)userDictionaryArray {
-    NSMutableArray *users = [[NSMutableArray alloc] init];
-    for (NSDictionary *userData in userDictionaryArray) {
-        Message *user = [self appUserFromDictionary:userData];
-        if(user)
-            [users addObject:user];
+    else {
+        UIImage *i = [UIImage imageNamed:@"avatarCurrentUser"];
+        imageData = UIImagePNGRepresentation(i);
     }
-    return users;
+    AppParticipant *participant = [[ AppParticipant alloc] init];
+    //[[User alloc] initWithUsername:[dictionary valueForKey:@"username"] name:[dictionary valueForKey:@"name"] publicKey:[dictionary valueForKey:@"publickey"] imageData:imageData lastUpdated:[dictionary valueForKey:@"lastupdated"]];
+    
+    [participant setUsername:[dictionary valueForKey:@"username"]];
+    [participant setName:[dictionary valueForKey:@"name"]];
+    [participant setPublicKey:[dictionary valueForKey:@"publickey"]];
+    [participant setLastUpdated:[dictionary valueForKey:@"lastupdated"]];
+    return participant;
 }
-- (NSString *)usernamesStringFromUserArray:(NSArray *)users {
+- (NSDictionary *)dictionaryFromAppParticipant:(AppParticipant *)participant {
+    if(!participant)
+        return nil;
+    NSMutableDictionary *participantDictionary = [[NSMutableDictionary alloc] init];
+    if(participant.username)
+    {
+        [participantDictionary setObject:participant.username forKey:@"username"];
+        if(participant.name)
+            [participantDictionary setObject:participant.name forKey:@"name"];
+        if(participant.publicKey)
+            [participantDictionary setObject:participant.publicKey forKey:@"publickey"];
+        if(participant.lastUpdated)
+            [participantDictionary setObject:participant.lastUpdated forKey:@"lastupdated"];
+        NSString *imageData = [self encodeImageToBase64String:[UIImage imageWithData:participant.imageData]];
+        if(imageData)
+            [participantDictionary setObject:imageData forKey:@"imagedata"];
+    }
+    return participantDictionary;
+}
+- (NSArray *)dictionaryArrayFromParticipantArray:(NSArray *)participantArray {
+    NSMutableArray *participantDictionaries = [[NSMutableArray alloc] init];
+    for (AppParticipant *participant in participantArray) {
+        NSDictionary *participantDictionary = [self dictionaryFromAppParticipant:participant];
+        if(participantDictionary)
+            [participantDictionaries addObject:participantDictionary];
+    }
+    return [NSArray arrayWithArray:participantDictionaries];
+}
+- (NSArray *)appParticipantArrayFromDictionaryArray:(NSArray *)participantDictionaryArray {
+    NSMutableArray *participants = [[NSMutableArray alloc] init];
+    for (NSDictionary *participantData in participantDictionaryArray) {
+        AppParticipant *participant = [self appParticipantFromDictionary:participantData];
+        if(participant)
+            [participants addObject:participant];
+    }
+    return participants;
+}
+- (NSString *)usernamesStringFromParticipantArray:(NSArray *)participants {
     NSMutableArray *usernames = [[NSMutableArray alloc] init];
-    for (NSDictionary *u in users) {
-        [usernames addObject:[u valueForKey:@"username"]];
+    for (NSDictionary *p in participants) {
+        [usernames addObject:[p valueForKey:@"username"]];
     }
     return [usernames componentsJoinedByString:@","];
 }
 
 // groups
-- (Group *)appGroupFromDictionary:(NSDictionary *)dictionary {
+- (AppGroup *)appGroupFromDictionary:(NSDictionary *)dictionary {
     if(!dictionary)
         return nil;
     if(![dictionary valueForKey:@"_id"])
@@ -381,25 +431,25 @@ int messageLifespanSeconds = 60*60*72;
     if([[dictionary valueForKey:@"_id"] isEqualToString:@""])
         return nil;
     
-    Group *group = [[Group alloc] initWithGroupId:[dictionary valueForKey:@"_id"]
-                                        name:[dictionary valueForKey:@"name"]
-                                     created:[dictionary valueForKey:@"created"]
-                                   publicKey:[dictionary valueForKey:@"publickey"]
-                                 adminsArray:[self fetchUsersByUsernames:[dictionary valueForKey:@"admins"] excludeCurrentUser:NO]
-                           participantsArray:[self fetchUsersByUsernames:[dictionary valueForKey:@"participants"] excludeCurrentUser:NO]];
+//    Group *group = [[Group alloc] initWithGroupId:[dictionary valueForKey:@"_id"]
+//                                        name:[dictionary valueForKey:@"name"]
+//                                     created:[dictionary valueForKey:@"created"]
+//                                   publicKey:[dictionary valueForKey:@"publickey"]
+//                                 adminsArray:[self fetchUsersByUsernames:[dictionary valueForKey:@"admins"] excludeCurrentUser:NO]
+//                           participantsArray:[self fetchUsersByUsernames:[dictionary valueForKey:@"participants"] excludeCurrentUser:NO]];
     
-//    Group *group = [[Group alloc] init];
+    AppGroup *group = [[AppGroup alloc] init];
 //    group.groupId = [dictionary valueForKey:@"_id"];
-//    [group setGroupId:[dictionary valueForKey:@"_id"]];
-//    [group setName:[dictionary valueForKey:@"name"]];
-//    [group setCreated:[dictionary valueForKey:@"created"]];
-//    [group setPublicKey:[dictionary valueForKey:@"publickey"]];
-//    [group setParticipants: [self fetchUsersByUsernames:[dictionary valueForKey:@"participants"] excludeCurrentUser:NO]];
-//    [group setAdmins: [self fetchUsersByUsernames:[dictionary valueForKey:@"admins"] excludeCurrentUser:NO]];
+    [group setGroupId:[dictionary valueForKey:@"_id"]];
+    [group setName:[dictionary valueForKey:@"name"]];
+    [group setCreated:[dictionary valueForKey:@"created"]];
+    [group setPublicKey:[dictionary valueForKey:@"publickey"]];
+    [group setParticipantsArray: [self fetchUsersByUsernames:[dictionary valueForKey:@"participants"] excludeCurrentUser:NO]];
+    [group setAdminsArray: [self fetchUsersByUsernames:[dictionary valueForKey:@"admins"] excludeCurrentUser:NO]];
     
     return group;
 }
-- (NSDictionary *)groupDictionaryFromAppGroup:(Group *)group {
+- (NSDictionary *)dictionaryFromAppGroup:(AppGroup *)group {
     if(!group)
         return nil;
     NSMutableDictionary *groupDictionary = [[NSMutableDictionary alloc] init];
@@ -411,16 +461,16 @@ int messageLifespanSeconds = 60*60*72;
         [groupDictionary setObject:group forKey:@"created"];
     if(group.publicKey)
         [groupDictionary setObject:group forKey:@"publickey"];
-    if(group.participants)
-        [groupDictionary setObject:[self usernamesStringFromUserArray:group.participants] forKey:@"participants"];
-    if(group.admins)
-        [groupDictionary setObject:[self usernamesStringFromUserArray:group.admins] forKey:@"admins"];
+    if(group.participantsArray)
+        [groupDictionary setObject:[self usernamesStringFromParticipantArray:group.participantsArray] forKey:@"participants"];
+    if(group.adminsArray)
+        [groupDictionary setObject:[self usernamesStringFromParticipantArray:group.adminsArray] forKey:@"admins"];
     return [NSDictionary dictionaryWithDictionary: groupDictionary];
 }
-- (NSArray *)groupDictionaryArrayFromGroupArray:(NSArray *)groupArray {
+- (NSArray *)dictionaryArrayFromGroupArray:(NSArray *)groupArray {
     NSMutableArray *groupDictionaries = [[NSMutableArray alloc] init];
-    for (Group *group in groupArray) {
-        NSDictionary *groupDictionary = [self groupDictionaryFromAppGroup:group];
+    for (AppGroup *group in groupArray) {
+        NSDictionary *groupDictionary = [self dictionaryFromAppGroup:group];
         if(groupDictionary)
             [groupDictionaries addObject:groupDictionary];
     }
@@ -429,7 +479,7 @@ int messageLifespanSeconds = 60*60*72;
 - (NSArray *)appGroupArrayFromDictionaryArray:(NSArray *)groupDictionaryArray {
     NSMutableArray *groups = [[NSMutableArray alloc] init];
     for (NSDictionary *groupData in groupDictionaryArray) {
-        Group *group = [self appGroupFromDictionary:groupData];
+        AppGroup *group = [self appGroupFromDictionary:groupData];
         if(group)
             [groups addObject:group];
     }
@@ -437,7 +487,7 @@ int messageLifespanSeconds = 60*60*72;
 }
 
 // messages
-- (Message *)appMessageFromDictionary:(NSDictionary *)dictionary {
+- (AppMessage *)appMessageFromDictionary:(NSDictionary *)dictionary {
     if(!dictionary)
         return nil;
     if(![dictionary valueForKey:@"_id"])
@@ -445,45 +495,45 @@ int messageLifespanSeconds = 60*60*72;
     if([[dictionary valueForKey:@"_id"] isEqualToString:@""])
         return nil;
     
-    Message *message = [[Message alloc] init];
+    AppMessage *message = [[AppMessage alloc] init];
     [message setMessageId:[dictionary valueForKey:@"_id"]];
     [message setCreationDate:[dictionary valueForKey:@"creationdate"]];
     [message setGroupId:[dictionary valueForKey:@"groupid"]];
     [message setImageData:[dictionary valueForKey:@"imagedata"]];
     [message setMac:[dictionary valueForKey:@"mac"]];
     [message setMessageText:[dictionary valueForKey:@"messagetext"]];
-    [message setSeenByParticipants:[dictionary valueForKey:@"seenbyparticipants"]];
+    [message setSeenByParticipantsArray:[dictionary valueForKey:@"seenbyparticipants"]];
     [message setSender:[dictionary valueForKey:@"sender"]];
     
     return message;
 }
-- (NSDictionary *)messageDictionaryFromAppMessage:(Message *)message {
-    if(!message)
+- (NSDictionary *)dictionaryFromAppMessage:(AppMessage *)appMessage {
+    if(!appMessage)
         return nil;
     NSMutableDictionary *messageDictionary = [[NSMutableDictionary alloc] init];
-    if(message.messageId)
-        [messageDictionary setObject:message.messageId forKey:@"_id"];
-    if(message.creationDate)
-        [messageDictionary setObject:message.creationDate forKey:@"creationdate"];
-    if(message.groupId)
-        [messageDictionary setObject:message.groupId forKey:@"groupid"];
-    if(message.imageData)
-        [messageDictionary setObject:message.imageData forKey:@"imagedata"];
-    if(message.mac)
-        [messageDictionary setObject:message.mac forKey:@"mac"];
-    if(message.messageText)
-        [messageDictionary setObject:message.messageText forKey:@"messagetext"];
-    if(message.seenByParticipantsArray)
-        [messageDictionary setObject:[message.seenByParticipantsArray componentsJoinedByString:@","] forKey:@"seenbyparticipants"];
-    if(message.sender)
-        [messageDictionary setObject:message.sender forKey:@"sender"];
+    if(appMessage.messageId)
+        [messageDictionary setObject:appMessage.messageId forKey:@"_id"];
+    if(appMessage.creationDate)
+        [messageDictionary setObject:appMessage.creationDate forKey:@"creationdate"];
+    if(appMessage.groupId)
+        [messageDictionary setObject:appMessage.groupId forKey:@"groupid"];
+    if(appMessage.imageData)
+        [messageDictionary setObject:appMessage.imageData forKey:@"imagedata"];
+    if(appMessage.mac)
+        [messageDictionary setObject:appMessage.mac forKey:@"mac"];
+    if(appMessage.messageText)
+        [messageDictionary setObject:appMessage.messageText forKey:@"messagetext"];
+    if(appMessage.seenByParticipantsArray)
+        [messageDictionary setObject:[appMessage.seenByParticipantsArray componentsJoinedByString:@","] forKey:@"seenbyparticipants"];
+    if(appMessage.sender)
+        [messageDictionary setObject:appMessage.sender forKey:@"sender"];
     
     return messageDictionary;
 }
-- (NSArray *)messageDictionaryArrayFromMessageArray:(NSArray *)messageArray {
+- (NSArray *)dictionaryArrayFromMessageArray:(NSArray *)messageArray {
     NSMutableArray *messageDictionaries = [[NSMutableArray alloc] init];
-    for (Message *message in messageArray) {
-        NSDictionary *messageDictionary = [self messageDictionaryFromAppMessage:message];
+    for (AppMessage *message in messageArray) {
+        NSDictionary *messageDictionary = [self dictionaryFromAppMessage:message];
         if(messageDictionary)
             [messageDictionaries addObject:messageDictionary];
     }
@@ -492,7 +542,7 @@ int messageLifespanSeconds = 60*60*72;
 - (NSArray *)appMessageArrayFromDictionaryArray:(NSArray *)messageDictionaryArray {
     NSMutableArray *messages = [[NSMutableArray alloc] init];
     for (NSDictionary *messageData in messageDictionaryArray) {
-        Message *message = [self appMessageFromDictionary:messageData];
+        AppMessage *message = [self appMessageFromDictionary:messageData];
         if(message)
             [messages addObject:message];
     }
@@ -772,7 +822,7 @@ int messageLifespanSeconds = 60*60*72;
 }
 - (void) pushCurrentUserToLocalData:(User *)currentUser {
     NSLog(@"pushCurrentUserToLocalData");
-    NSArray *dataToStore = [[NSArray alloc] initWithObjects:[self userDictionaryFromAppUser:currentUser],nil];
+    NSArray *dataToStore = [[NSArray alloc] initWithObjects:[self dictionaryFromAppUser:currentUser],nil];
     [self pushLocalDataArray:CURRENT_USER withArray:dataToStore];
 }
 

@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@class User, Message, Group, Participant;
+@class User, AppMessage, AppGroup, AppParticipant;
 @class UIImage;
 
 @interface AppDataSource : NSObject
@@ -31,12 +31,12 @@
 
 - (NSArray *)fetchUserGroupsGoToServer:(BOOL)goToServer;
 //- (void)fetchUserGroups:(User *)user goToServer:(BOOL)goToServer withCompletion:(void (^)(NSArray *, NSError *))completion;
-- (Group *)createNewGroup:(Group *)groupToCreate;
-- (Group *)fetchDMGroupWithParticipant:(Participant *)participant;
+- (AppGroup *)createNewGroup:(AppGroup *)groupToCreate;
+- (AppGroup *)fetchDMGroupWithParticipant:(AppParticipant *)participant;
 
 #pragma mark - Public Message Methods
 
--(void)postNewMessage:(Message *)message withCompletion:(void (^)(Message *, NSError *))completion;
+-(void)postNewMessage:(AppMessage *)message withCompletion:(void (^)(AppMessage *, NSError *))completion;
 
 #pragma mark - TEST / DEV Methods
 

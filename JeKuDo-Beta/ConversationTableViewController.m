@@ -9,7 +9,7 @@
 #import "ConversationTableViewController.h"
 #import "ReceivedTextTableViewCell.h"
 #import "SentTextTableViewCell.h"
-#import "Message.h"
+#import "AppMessage.h"
 #import "UIColor+AppColors.h"
 #import "UIImage+convertToColor.h"
 #import "AppDataSource.h"
@@ -45,7 +45,7 @@ static NSString * const sentTextCellIdentifier = @"sentTextCellIdentifier";
     
     if (self.initialMessageIndex != NSNotFound)
         if(self.initialMessageIndex > 0)
-            if(self.initialMessageIndex <= _group.messages.count)
+            if(self.initialMessageIndex <= self.group.messages.count)
                 [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.initialMessageIndex inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:NO];
 }
 
@@ -174,21 +174,21 @@ static NSString * const sentTextCellIdentifier = @"sentTextCellIdentifier";
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
     NSString *messageText = textField.text;
     if(messageText) {
-        Message *messageToSend = [[Message alloc] init];
+        AppMessage *messageToSend = [[AppMessage alloc] init];
         [messageToSend setMessageId:nil];
         [messageToSend setCreationDate:[NSDate date]];
         [messageToSend setGroupId:_group.groupId];
         [messageToSend setImageData:nil];
         [messageToSend setMac:@""];
         [messageToSend setMessageText:messageText];
-        [messageToSend setSeenByParticipants:@[_user.username]];
+        [messageToSend setSeenByParticipantsArray:@[_user.username]];
         [messageToSend setSender:_user.username];
         [self prepareToPostNewMessage:messageToSend];
     }
     return YES;
 }
 
-- (void)prepareToPostNewMessage:(Message *)messageToSend {
+- (void)prepareToPostNewMessage:(AppMessage *)messageToSend {
     _sendMessageTextField.text = @"";
     if(messageToSend.groupId)
     {
@@ -198,7 +198,7 @@ static NSString * const sentTextCellIdentifier = @"sentTextCellIdentifier";
     else {
         if(_group.participantsArray.count > 1) {
             //        g.participants = @[_user.username,
-            Group *newGroup = [[AppDataSource sharedInstance] createNewGroup:_group];
+            AppGroup *newGroup = [[AppDataSource sharedInstance] createNewGroup:_group];
             [messageToSend setGroupId:newGroup.groupId];
             messageToSend = [self postNewMessge:messageToSend];
         }
@@ -229,12 +229,12 @@ static NSString * const sentTextCellIdentifier = @"sentTextCellIdentifier";
     return nil;
 }
 
-- (Message *)postNewMessge:(Message *)messageToSend {
-    Message *messageSent = messageToSend;
-    [[AppDataSource sharedInstance] postNewMessage:messageToSend withCompletion:^(Message *m, NSError *err) {
+- (AppMessage *)postNewMessge:(AppMessage *)messageToSend {
+    AppMessage *messageSent = messageToSend;
+    [[AppDataSource sharedInstance] postNewMessage:messageToSend withCompletion:^(AppMessage *m, NSError *err) {
         [messageSent setMessageId:m.messageId];
         [messageSent setCreationDate:m.creationDate];
-        [messageSent setSeenByParticipants:m.seenByParticipants];
+        [messageSent setSeenByParticipantsArray:m.seenByParticipantsArray];
     }];
     return messageSent;
 }
@@ -254,7 +254,7 @@ static NSString * const sentTextCellIdentifier = @"sentTextCellIdentifier";
     
     UITableViewCell *cell;
     
-    Message *message = _group.messages[indexPath.row];
+    AppMessage *message = _group.messages[indexPath.row];
     
     if(message) {
         

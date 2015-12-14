@@ -9,9 +9,9 @@
 #import "MessagesTableViewController.h"
 #import "UIColor+AppColors.h"
 #import "UIImage+convertToColor.h"
-#import "Message.h"
+//#import "Message.h"
 #import "MessagesTableViewCell.h"
-#import "Group.h"
+#import "AppGroup.h"
 #import "InternalNavigationController.h"
 #import "ContactsTableViewController.h"
 #import "ConversationTableViewController.h"
@@ -113,7 +113,7 @@ static NSString * const MessagesTableViewCellIdentifier = @"Cell";
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    Group *group = _groups[indexPath.row];
+    AppGroup *group = _groups[indexPath.row];
     
     MessagesTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:MessagesTableViewCellIdentifier];
     
@@ -121,14 +121,14 @@ static NSString * const MessagesTableViewCellIdentifier = @"Cell";
         cell = [[MessagesTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:MessagesTableViewCellIdentifier];
         
     if(group.messages.count > 0) {
-        Message *m = group.messages[group.messages.count -1];
+        AppMessage *m = group.messages[group.messages.count -1];
         
         for(UIView *eachView in [cell subviews])
             [eachView removeFromSuperview];
         
         UIImage *avatar;
         if(group.name) {
-            for (Participant *participant in group.participants) {
+            for (AppParticipant *participant in group.participantsArray) {
                 if ([group.name isEqualToString:participant.username])
                     avatar = participant.avatarImage;
             }
@@ -186,7 +186,7 @@ static NSString * const MessagesTableViewCellIdentifier = @"Cell";
     [self presentGroupConversationTableViewController:_groups[indexPath.row]];
 }
 
-- (void)presentGroupConversationTableViewController:(Group *)group {
+- (void)presentGroupConversationTableViewController:(AppGroup *)group {
     ConversationTableViewController *conversationTableViewController = [[ConversationTableViewController alloc] init];
     [conversationTableViewController setGroup:group];
     conversationTableViewController.initialMessageIndex = group.messages.count-1;

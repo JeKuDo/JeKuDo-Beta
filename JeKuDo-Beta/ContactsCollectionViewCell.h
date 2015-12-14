@@ -7,12 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "Group.h"
+#import "AppGroup.h"
 
 @interface ContactsCollectionViewCell : UICollectionViewCell
 
-@property (nonatomic, strong) Group *group;
+@property (nonatomic, strong) AppGroup *group;
 
-- (void)setGroup:(Group *)group;
+- (void)setGroup:(AppGroup *)group;
 
 @end

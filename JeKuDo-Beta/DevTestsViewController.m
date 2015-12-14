@@ -8,7 +8,7 @@
 
 #import "DevTestsViewController.h"
 #import "AppDelegate.h"
-#import "Group.h"
+#import "AppGroup.h"
 #import "SignUpViewController.h"
 #import "EntryNavigationController.h"
 

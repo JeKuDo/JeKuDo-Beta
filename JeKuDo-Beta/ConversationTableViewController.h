@@ -8,11 +8,11 @@
 
 #import <UIKit/UIKit.h>
 #import "User.h"
-#import "Group.h"
+#import "AppGroup.h"
 
 @interface ConversationTableViewController : UITableViewController
 
-@property (nonatomic, strong) Group *group;
+@property (nonatomic, strong) AppGroup *group;
 @property (nonatomic, strong) User *user;
 @property (nonatomic, strong) UIView *composeView;
 @property (nonatomic, strong) UITextField *sendMessageTextField;

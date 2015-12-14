@@ -195,8 +195,8 @@ static NSString * const ContactsTableViewCellIdentifier = @"Cell";
 
         ConversationTableViewController *conversationTableViewController = [[ConversationTableViewController alloc] init];
         //    conversationTableViewController.group = group;
-        Group *group = [[Group alloc] init];
-        [group setParticipants:@[user.username, sender.username]];
+        AppGroup *group = [[AppGroup alloc] init];
+        [group setParticipantsArray:@[user.username, sender.username]];
         [conversationTableViewController setGroup:group];
         
         [conversationTableViewController setUser:user];

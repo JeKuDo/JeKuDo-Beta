@@ -2,20 +2,18 @@
 //  Participant.h
 //  JeKuDo-Beta
 //
-//  Created by reuven on 12/7/15.
+//  Created by reuven on 12/14/15.
 //  Copyright © 2015 JeKuDo. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@class UIImage;
-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface Participant : NSManagedObject
 
-- (UIImage *)avatarImage;
+// Insert code here to declare functionality of your managed object subclass
 
 @end
 

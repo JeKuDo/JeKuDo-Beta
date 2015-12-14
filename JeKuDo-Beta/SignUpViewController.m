@@ -15,7 +15,7 @@
 #import "EntryNavigationController.h"
 #import "AppDataSource.h"
 #import "User.h"
-#import "Group.h"
+#import "AppGroup.h"
 #import "UIColor+AppColors.h"
 
 @interface SignUpViewController ()
@@ -464,7 +464,7 @@
     messagesTableViewController.user = _user;
     NSMutableArray *groups = [[[AppDataSource sharedInstance] fetchUserGroupsGoToServer:YES] mutableCopy];
     NSMutableArray *groupsCopy = [groups mutableCopy];
-    for (Group *group in groupsCopy) {
+    for (AppGroup *group in groupsCopy) {
         if (group.messages.count <1)
             [groups removeObject:group];
     }

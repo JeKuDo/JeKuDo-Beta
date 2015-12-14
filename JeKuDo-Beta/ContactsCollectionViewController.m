@@ -9,8 +9,8 @@
 #import "ContactsCollectionViewController.h"
 #import "ContactsCollectionViewCell.h"
 #import "AppDataSource.h"
-#import "Participant.h"
-#import "Group.h"
+//#import "AppParticipant.h"
+#import "AppGroup.h"
 #import "ConversationTableViewController.h"
 #import "InternalNavigationController.h"
 #import "GroupAvatarGenerator.h"
@@ -130,16 +130,16 @@ static NSString * const reuseIdentifier = @"Cell";
 
 
 
-- (void)presentGroupConversationTableViewController:(Group *)group {
+- (void)presentGroupConversationTableViewController:(AppGroup *)appGroup {
     ConversationTableViewController *conversationTableViewController = [[ConversationTableViewController alloc] init];
-    [conversationTableViewController setGroup:group];
-    long messageIndex = group.messages.count;
+    [conversationTableViewController setGroup:appGroup];
+    long messageIndex = appGroup.messages.count;
     if (messageIndex > 0)
         messageIndex--;
     conversationTableViewController.initialMessageIndex = messageIndex;
     
     [conversationTableViewController setUser:_currentUser];
-    [conversationTableViewController setTitle:group.name];
+    [conversationTableViewController setTitle:appGroup.name];
     
     InternalNavigationController *navigationController = [[InternalNavigationController alloc] initWithRootViewController:conversationTableViewController];
     
@@ -179,16 +179,16 @@ static NSString * const reuseIdentifier = @"Cell";
     [cell setRestorationIdentifier:reuseIdentifier];
     
     // create/retrieve group for user
-    Group *group = [[Group alloc] init];
-    Participant *otherUser = _users[indexPath.row];
+    AppGroup *appGroup = [[AppGroup alloc] init];
+    AppParticipant *otherUser = _users[indexPath.row];
     NSMutableArray *participants = [[NSMutableArray alloc] init];
     [participants addObject:_currentUser];
     [participants addObject:otherUser];
-    [group setParticipants:participants];
+    [appGroup setParticipantsArray:participants];
     
-    group = [[AppDataSource sharedInstance] createNewGroup:group];
-    [group setName:otherUser.username];
-    [cell setGroup:group];
+    appGroup = [[AppDataSource sharedInstance] createNewGroup:appGroup];
+    [appGroup setName:otherUser.username];
+    [cell setGroup:appGroup];
     
     return cell;
 }
@@ -231,7 +231,7 @@ static NSString * const reuseIdentifier = @"Cell";
 //    [self.navigationController pushViewController:photoGridController animated:YES];
     
     User *selectedParticipant = _users[indexPath.row];
-    Group *group = [[AppDataSource sharedInstance] fetchDMGroupWithParticipant:selectedParticipant];
+    AppGroup *group = [[AppDataSource sharedInstance] fetchDMGroupWithParticipant:selectedParticipant];
     [group setName:selectedParticipant.username];
     [self presentGroupConversationTableViewController:group];
     
